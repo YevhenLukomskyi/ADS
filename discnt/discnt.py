@@ -37,10 +37,10 @@ def partial_sort(array, n):
 
 def solve(prices, discount):
     total_price = 0.0
-    n = len(prices) // 3
+    n = len(prices) / 3
     partial_sort(prices, n)
 
-    discount = 1 - discount / 100
+    discount = 1 - discount / 100.0
 
     for i in range(0, n):
         total_price += prices[i] * discount
