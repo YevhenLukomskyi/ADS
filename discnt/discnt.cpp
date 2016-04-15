@@ -6,8 +6,6 @@
 #include <ctime>
 #include <iomanip>
 
-using namespace std;
-
 void copy_merge_results(std::vector<int>& vector, std::vector<int>& merge_results, int left, int right){
     for(int i = left; i <= right; i++){
         vector[i] = merge_results[i];
@@ -64,10 +62,10 @@ void merge_sort(std::vector<int>& vector){
 
 int main() {
 
-    ifstream infile("discnt.in");
-    ofstream outfile("discnt.out");
+    std::ifstream infile("discnt.in");
+    std::ofstream outfile("discnt.out");
 
-    string sLine;
+    std::string sLine;
     getline(infile, sLine);
     std::stringstream iss(sLine);
 
