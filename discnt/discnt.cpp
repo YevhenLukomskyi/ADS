@@ -104,12 +104,13 @@ int main() {
 	int discount_percent = std::stoi(sLine);
 	double discount = 1 - discount_percent / 100.0;
 
-	radix_sort(prices);
+	merge_sort(prices);
 
 	double sum_total = 0;
 	for (int i = 0; i < prices.size() / 3; i++) {
-		sum_total += prices[i] * discount;
+		sum_total += prices[i];
 	}
+	sum_total *= discount;
 
 	for (int i = prices.size() / 3; i < prices.size(); i++) {
 		sum_total += prices[i];
