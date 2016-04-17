@@ -88,7 +88,7 @@ void radix_sort(std::vector<int>& vector) {
 }
 
 int main() {
-	std::ifstream infile("08.in");
+	std::ifstream infile("discnt.in");
 	std::ofstream outfile("discnt.out");
 
 	std::string sLine;
