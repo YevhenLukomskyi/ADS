@@ -60,14 +60,11 @@ void merge(std::vector<int>& vector, int left, int middle, int right, std::vecto
 }
 
 void merge_recursive(std::vector<int>& vector, int left, int right, std::vector<int>& merge_result) {
-    if (left - right >= 10) {
+    if (left < right) {
         int middle = (left + right) >> 1;
         merge_recursive(vector, left, middle, merge_result);
         merge_recursive(vector, middle + 1, right, merge_result);
         merge(vector, left, middle, right, merge_result);
-    }
-    else{
-        insertion_sort(vector, left, right);
     }
 }
 
@@ -94,7 +91,7 @@ int main() {
     double discount = 1 - discount_percent / 100.0;
 
     if(prices.size() > 1){
-  merge_sort(prices);
+        merge_sort(prices);
     }
 
     double sum_total = 0;
