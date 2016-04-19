@@ -90,18 +90,21 @@ int main() {
     int discount_percent = std::stoi(sLine);
     double discount = 1 - discount_percent / 100.0;
 
+    double sum_total = 0;
+
     if(prices.size() > 1){
         merge_sort(prices);
-    }
+        for (int i = 0; i < prices.size() / 3; i++) {
+            sum_total += prices[i];
+        }
+        sum_total *= discount;
 
-    double sum_total = 0;
-    for (int i = 0; i < prices.size() / 3; i++) {
-        sum_total += prices[i];
+        for (int i = prices.size() / 3; i < prices.size(); i++) {
+            sum_total += prices[i];
+        }
     }
-    sum_total *= discount;
-
-    for (int i = prices.size() / 3; i < prices.size(); i++) {
-        sum_total += prices[i];
+    else {
+        sum_total = prices.size(0);
     }
 
     outfile << std::fixed << std::setprecision(2) << sum_total;
