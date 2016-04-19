@@ -93,7 +93,9 @@ int main() {
     int discount_percent = std::stoi(sLine);
     double discount = 1 - discount_percent / 100.0;
 
-    merge_sort(prices);
+    if(prices.size() > 1){
+  merge_sort(prices);
+    }
 
     double sum_total = 0;
     for (int i = 0; i < prices.size() / 3; i++) {
@@ -105,7 +107,7 @@ int main() {
         sum_total += prices[i];
     }
 
-    std::cout << std::fixed << std::setprecision(2) << sum_total;
+    outfile << std::fixed << std::setprecision(2) << sum_total;
 
     infile.close();
     outfile.close();
