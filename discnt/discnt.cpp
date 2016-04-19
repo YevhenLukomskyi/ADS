@@ -104,7 +104,7 @@ int main() {
         }
     }
     else {
-        sum_total = prices.size(0);
+        sum_total = prices[0];
     }
 
     outfile << std::fixed << std::setprecision(2) << sum_total;
