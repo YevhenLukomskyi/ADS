@@ -64,7 +64,10 @@ void merge_recursive(std::vector<int>& vector, int left, int right, std::vector<
         int middle = (left + right) >> 1;
         merge_recursive(vector, left, middle, merge_result);
         merge_recursive(vector, middle + 1, right, merge_result);
-        merge(vector, left, middle, right, merge_result);
+
+        if(vector[middle] < vector[middle + 1]){
+            merge(vector, left, middle, right, merge_result);
+        }
     }
 }
 
