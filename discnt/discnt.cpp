@@ -94,13 +94,13 @@ int main() {
     double sum_total = 0;
 
     if(prices.size() > 1){
-	if(prices.size() > 10){
-	   merge_sort(prices);
-	} 
-	else{
-           insertion_sort(prices);
+        if(prices.size() > 10){
+            merge_sort(prices);
         }
-        
+        else{
+            insertion_sort(prices, 0, prices.size() - 1);
+        }
+
         for (int i = prices.size() / 3; i < prices.size(); i++) {
             sum_total += prices[i];
         }
@@ -109,7 +109,7 @@ int main() {
         for (int i = 0; i < prices.size() / 3; i++) {
             sum_total += prices[i];
         }
-    } 
+    }
     else {
         sum_total = prices[0];
     }
