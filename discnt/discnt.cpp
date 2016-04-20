@@ -74,22 +74,20 @@ void merge_sort(std::vector<int>& vector) {
 }
 
 int main() {
-    std::ifstream infile("discnt.in");
+    std::ifstream infile("discnt.in", std::ios::in);
     std::ofstream outfile("discnt.out");
 
-    std::string sLine;
-    getline(infile, sLine);
-    std::stringstream iss(sLine);
-
-    int number;
     std::vector<int> prices;
-    while (iss >> number)
-        prices.push_back(number);
 
-    getline(infile, sLine);
-    int discount_percent = std::stoi(sLine);
+    int price;
+    while (infile >> price) {
+        prices.push_back(price);
+    }
+
+    int discount_percent = prices[prices.size() - 1];
+    prices.pop_back();
+
     double discount = 1 - discount_percent / 100.0;
-
     double sum_total = 0;
 
     if(prices.size() > 1){
