@@ -9,7 +9,7 @@
 void insertion_sort(std::vector<int>& vector, int left, int right) {
     for (int i = left; i <= right; i++) {
         int j = i;
-        while (j > 0 && vector[j] > vector[j - 1]){
+        while (j > 0 && vector[j] < vector[j - 1]){
             int tmp = vector[j - 1];
             vector[j - 1] = vector[j];
             vector[j] = tmp;
@@ -31,7 +31,7 @@ void merge(std::vector<int>& vector, int left, int middle, int right, std::vecto
     int result_write_index = left;
 
     while (left_read_index <= middle && right_read_index <= right) {
-        if (vector[left_read_index] > vector[right_read_index]) {
+        if (vector[left_read_index] < vector[right_read_index]) {
             merge_result[result_write_index] = vector[left_read_index];
             left_read_index++;
         }
@@ -94,16 +94,22 @@ int main() {
     double sum_total = 0;
 
     if(prices.size() > 1){
-        merge_sort(prices);
-        for (int i = 0; i < prices.size() / 3; i++) {
+	if(prices.size() > 10){
+	   merge_sort(prices);
+	} 
+	else{
+           insertion_sort(prices);
+        }
+        
+        for (int i = prices.size() / 3; i < prices.size(); i++) {
             sum_total += prices[i];
         }
         sum_total *= discount;
 
-        for (int i = prices.size() / 3; i < prices.size(); i++) {
+        for (int i = 0; i < prices.size() / 3; i++) {
             sum_total += prices[i];
         }
-    }
+    } 
     else {
         sum_total = prices[0];
     }
