@@ -6,18 +6,6 @@
 #include <ctime>
 #include <iomanip>
 
-void insertion_sort(std::vector<int>& vector, int left, int right) {
-    for (int i = left; i <= right; i++) {
-        int j = i;
-        while (j > 0 && vector[j] < vector[j - 1]){
-            int tmp = vector[j - 1];
-            vector[j - 1] = vector[j];
-            vector[j] = tmp;
-            j--;
-        }
-    }
-}
-
 //merge sort
 void copy_merge_results(std::vector<int>& vector, std::vector<int>& merge_results, int left, int right) {
     for (int i = left; i <= right; i++) {
@@ -96,12 +84,7 @@ int main() {
     double sum_total = 0;
 
     if(prices.size() > 1){
-        if(prices.size() > 10){
-            merge_sort(prices);
-        }
-        else{
-            insertion_sort(prices, 0, prices.size() - 1);
-        }
+        merge_sort(prices);
 
         for (int i = prices.size() / 3; i < prices.size(); i++) {
             sum_total += prices[i];
