@@ -86,12 +86,12 @@ int main() {
     if(prices.size() > 1){
         merge_sort(prices);
 
-        for (int i = prices.size() / 3; i < prices.size(); i++) {
+        for (int i = 0; i < prices.size() / 3; i++) {
             sum_total += prices[i];
         }
         sum_total *= discount;
 
-        for (int i = 0; i < prices.size() / 3; i++) {
+        for (int i = prices.size() / 3; i < prices.size(); i++) {
             sum_total += prices[i];
         }
     }
