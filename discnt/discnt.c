@@ -1,5 +1,4 @@
 #include <stdio.h>
-
 #define N 10000 + 1
 
 //merge sort
@@ -61,13 +60,14 @@ void merge_sort(int* array, int size) {
 }
 
 void insertion_sort(int* array, int size) {
-	int tmp;
+	int tmp, j;
 	for (int i = 1; i < size; i++) {
-		while (i > 0 && array[i - 1] < array[i]) {
-			tmp = array[i];
-			array[i] = array[i - 1];
-			array[i - 1] = tmp;
-			i--;
+		j = i;
+		while (j > 0 && array[j - 1] < array[j]) {
+			tmp = array[j];
+			array[j] = array[j - 1];
+			array[j - 1] = tmp;
+			j--;
 		}
 	}
 }
@@ -115,5 +115,4 @@ int main() {
 
 	return 0;
 }
-
 
