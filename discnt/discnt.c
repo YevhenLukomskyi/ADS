@@ -60,6 +60,18 @@ void merge_sort(int* array, int size) {
 	merge_recursive(array, 0, size - 1, merge_result);
 }
 
+void insertion_sort(int* array, int size) {
+	int tmp;
+	for (int i = 1; i < size; i++) {
+		while (i > 0 && array[i - 1] < array[i]) {
+			tmp = array[i];
+			array[i] = array[i - 1];
+			array[i - 1] = tmp;
+			i--;
+		}
+	}
+}
+
 int main() {
 	FILE* file = fopen("discnt.in", "r");
 	int array[N];
@@ -77,8 +89,13 @@ int main() {
 	double sum_total = 0;
 
 	if (size > 1) {
-		merge_sort(array, size);
-
+		if (size <= 10) {
+			insertion_sort(array, size);
+		}
+		else {
+			merge_sort(array, size);
+		}
+		
 		for (int i = 0; i < size / 3; i++) {
 			sum_total += array[i];
 		}
@@ -98,4 +115,5 @@ int main() {
 
 	return 0;
 }
+
 
