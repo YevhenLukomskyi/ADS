@@ -115,16 +115,12 @@ struct OUTPUT_DATA solve(struct INPUT_DATA inputData) {
 		sortPartial(hamstrFoodTotal, currentHamstrCount);
 
 		currentConsumedFood = getSum(hamstrFoodTotal, currentHamstrCount);
-		if (currentHamstrCount == inputData.hamstrCount) {
-			break;
-		}
-		
-		if (currentConsumedFood == inputData.foodSupplay) {
+		if (currentConsumedFood > inputData.foodSupplay) {
+			currentHamstrCount--;
 			break;
 		}
 
-		if (currentConsumedFood > inputData.foodSupplay) {
-			currentHamstrCount--;
+		if (currentHamstrCount == inputData.hamstrCount) {
 			break;
 		}
 
