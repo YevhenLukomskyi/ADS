@@ -113,23 +113,30 @@ int getConsumedFood(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFo
 	return currentConsumedFood;
 }
 
-int solveRecurse(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoodGreed,
-	std::vector<int>& hamstrFoodTotal, int foodSupplay, int left, int right) {
+int solveRecurse(struct INPUT_DATA inputData, std::vector<int> hamstrFoodTotal, int left, int right) {
+
+	if (inputData.foodSupplay == 0) {
+		return 0;
+	}
 
 	int currentHamstrCount = left + (right - left) / 2;
 
-	int consumedFood1 = getConsumedFood(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, currentHamstrCount);
-	int consumedFood2 = getConsumedFood(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, currentHamstrCount + 1);
+	if (right > inputData.foodSupplay - 1) {
+		return inputData.hamstrCount;
+	}
 
-	if (consumedFood1 > 0 && consumedFood2 > 0 && consumedFood1 <= foodSupplay && consumedFood2 > foodSupplay) {
+	int consumedFood1 = getConsumedFood(inputData.hamstrFoodRate, inputData.hamstrFoodGreed, hamstrFoodTotal, currentHamstrCount);
+	int consumedFood2 = getConsumedFood(inputData.hamstrFoodRate, inputData.hamstrFoodGreed, hamstrFoodTotal, currentHamstrCount + 1);
+
+	if (consumedFood1 > 0 && consumedFood2 > 0 && consumedFood1 <= inputData.foodSupplay && consumedFood2 > inputData.foodSupplay) {
 		return currentHamstrCount;
 	}
 	else {
-		if (consumedFood1 < 0 || consumedFood2 < 0 || consumedFood1 > foodSupplay) {
-			solveRecurse(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, foodSupplay, left, currentHamstrCount - 1);
+		if (consumedFood1 < 0 || consumedFood2 < 0 || consumedFood1 > inputData.foodSupplay) {
+			solveRecurse(inputData, hamstrFoodTotal, left, currentHamstrCount - 1);
 		}
 		else {
-			solveRecurse(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, foodSupplay, currentHamstrCount + 1, right);
+			solveRecurse(inputData, hamstrFoodTotal, currentHamstrCount + 1, right);
 		}
 	}
 
@@ -139,7 +146,7 @@ struct OUTPUT_DATA solve(struct INPUT_DATA inputData) {
 
 	std::vector<int> hamstrFoodTotal(inputData.hamstrCount);
 
-	int currentHamstrCount = solveRecurse(inputData.hamstrFoodRate, inputData.hamstrFoodGreed, hamstrFoodTotal, inputData.foodSupplay, 0, inputData.hamstrCount);
+	int currentHamstrCount = solveRecurse(inputData, hamstrFoodTotal, 0, inputData.hamstrCount);
 
 	struct OUTPUT_DATA outputData;
 	outputData.maxHamstrCount = currentHamstrCount;
