@@ -118,6 +118,10 @@ int solveRecurse(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoodG
 
 	int currentHamstrCount = left + (right - left) / 2;
 
+	if (currentHamstrCount > right - 1) {
+		return hamstrFoodTotal.size();
+	}
+
 	int consumedFood1 = getConsumedFood(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, currentHamstrCount);
 	int consumedFood2 = getConsumedFood(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, currentHamstrCount + 1);
 
