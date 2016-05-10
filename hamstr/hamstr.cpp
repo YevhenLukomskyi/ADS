@@ -7,7 +7,7 @@
 
 
 struct INPUT_DATA {
-	int foodSupply;
+	int foodSupplay;
 	int hamstrCount;
 	std::vector<int> hamstrFoodRate;
 	std::vector<int> hamstrFoodGreed;
@@ -25,7 +25,7 @@ struct INPUT_DATA readInput(std::string fileName) {
 
 	struct INPUT_DATA inputData;
 
-	inputFile >> inputData.foodSupply;
+	inputFile >> inputData.foodSupplay;
 	inputFile >> inputData.hamstrCount;
 
 	inputData.hamstrFoodRate = std::vector<int>(inputData.hamstrCount);
@@ -96,6 +96,10 @@ int findOrderStatisticRecursive(std::vector<int>& vect, int k, int low, int high
 	}
 }
 
+void sortPartial(std::vector<int>& vect, int k) {
+	findOrderStatisticRecursive(vect, k, 0, vect.size() - 1);
+}
+
 int getConsumedFood(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoodGreed,
 	std::vector<int>& hamstrFoodTotal, int count) {
 
@@ -103,7 +107,7 @@ int getConsumedFood(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFo
 		hamstrFoodTotal[i] = hamstrFoodRate[i] + (count - 1) * hamstrFoodGreed[i];
 	}
 
-	findOrderStatisticRecursive(hamstrFoodTotal, count, 0, hamstrFoodTotal.size() - 1);
+	sortPartial(hamstrFoodTotal, count);
 
 	int currentConsumedFood = getSum(hamstrFoodTotal, count);
 	return currentConsumedFood;
@@ -111,24 +115,24 @@ int getConsumedFood(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFo
 
 int solveRecurse(struct INPUT_DATA inputData, std::vector<int> hamstrFoodTotal, int left, int right) {
 
-	if (inputData.foodSupply == 0) {
+	if (inputData.foodSupplay == 0) {
 		return 0;
 	}
 
 	int currentHamstrCount = left + (right - left) / 2;
 
-	if (right > inputData.foodSupply - 1) {
+	if (right > inputData.foodSupplay - 1) {
 		return inputData.hamstrCount;
 	}
 
 	int consumedFood1 = getConsumedFood(inputData.hamstrFoodRate, inputData.hamstrFoodGreed, hamstrFoodTotal, currentHamstrCount);
 	int consumedFood2 = getConsumedFood(inputData.hamstrFoodRate, inputData.hamstrFoodGreed, hamstrFoodTotal, currentHamstrCount + 1);
 
-	if (consumedFood1 > 0 && consumedFood2 > 0 && consumedFood1 <= inputData.foodSupply && consumedFood2 > inputData.foodSupply) {
+	if (consumedFood1 > 0 && consumedFood2 > 0 && consumedFood1 <= inputData.foodSupplay && consumedFood2 > inputData.foodSupplay) {
 		return currentHamstrCount;
 	}
 	else {
-		if (consumedFood1 < 0 || consumedFood2 < 0 || consumedFood1 > inputData.foodSupply) {
+		if (consumedFood1 < 0 || consumedFood2 < 0 || consumedFood1 > inputData.foodSupplay) {
 			solveRecurse(inputData, hamstrFoodTotal, left, currentHamstrCount - 1);
 		}
 		else {
