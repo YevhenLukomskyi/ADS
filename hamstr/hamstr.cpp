@@ -39,14 +39,6 @@ struct INPUT_DATA readInput(std::string fileName) {
 	return inputData;
 }
 
-int getSum(std::vector<int>& vect, int n) {
-	int sum = 0;
-	for (int i = 0; i < n; i++) {
-		sum += vect[i];
-	}
-	return sum;
-}
-
 int partition(std::vector<int>& vect, int low, int high) {
 	int left = std::min(low + 1, high);
 	int right = high;
@@ -94,8 +86,8 @@ int findOrderStatisticRecursive(std::vector<int>& vect, int k, int low, int high
 	}
 }
 
-int getConsumedFood(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoodGreed,
-	std::vector<int>& hamstrFoodTotal, int count) {
+bool canFeedHamstr(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoodGreed,
+	std::vector<int>& hamstrFoodTotal, int foodSupply, int count) {
 
 	for (int i = 0; i < hamstrFoodRate.size(); i++) {
 		hamstrFoodTotal[i] = hamstrFoodRate[i] + (count - 1) * hamstrFoodGreed[i];
@@ -103,8 +95,16 @@ int getConsumedFood(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFo
 
 	findOrderStatisticRecursive(hamstrFoodTotal, count, 0, hamstrFoodTotal.size() - 1);
 
-	int currentConsumedFood = getSum(hamstrFoodTotal, count);
-	return currentConsumedFood;
+	int sum = 0;
+
+	for (int i = 0; i < count; i++) {
+		if (INT_MAX - sum < hamstrFoodTotal[i])
+		{
+			return false;
+		}
+		sum += hamstrFoodTotal[i];
+	}
+	return sum < foodSupply;
 }
 
 int solveRecurse(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoodGreed,
@@ -112,14 +112,14 @@ int solveRecurse(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoodG
 
 	int currentHamstrCount = left + (right - left) / 2;
 
-	int consumedFood1 = getConsumedFood(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, currentHamstrCount);
-	int consumedFood2 = getConsumedFood(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, currentHamstrCount + 1);
+	bool canFeedCurrent = canFeedHamstr(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, foodSupply, currentHamstrCount);
+	bool canFeedNext = canFeedHamstr(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, foodSupply, currentHamstrCount + 1);
 
-	if (consumedFood1 > 0 && consumedFood2 > 0 && consumedFood1 <= foodSupply && consumedFood2 > foodSupply) {
+	if (canFeedCurrent && !canFeedNext) {
 		return currentHamstrCount;
 	}
 	else {
-		if (consumedFood1 < 0 || consumedFood2 < 0 || consumedFood1 > foodSupply) {
+		if (!canFeedCurrent) {
 			solveRecurse(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, foodSupply, left, currentHamstrCount - 1);
 		}
 		else {
