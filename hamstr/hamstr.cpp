@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -7,7 +9,7 @@
 
 
 struct INPUT_DATA {
-	int foodSupplay;
+	int foodSupply;
 	int hamstrCount;
 	std::vector<int> hamstrFoodRate;
 	std::vector<int> hamstrFoodGreed;
@@ -21,11 +23,9 @@ struct OUTPUT_DATA {
 struct INPUT_DATA readInput(std::string fileName) {
 	std::ifstream inputFile(fileName, std::ifstream::in);
 
-	auto is_open = inputFile.is_open();
-
 	struct INPUT_DATA inputData;
 
-	inputFile >> inputData.foodSupplay;
+	inputFile >> inputData.foodSupply;
 	inputFile >> inputData.hamstrCount;
 
 	inputData.hamstrFoodRate = std::vector<int>(inputData.hamstrCount);
@@ -96,10 +96,6 @@ int findOrderStatisticRecursive(std::vector<int>& vect, int k, int low, int high
 	}
 }
 
-void sortPartial(std::vector<int>& vect, int k) {
-	findOrderStatisticRecursive(vect, k, 0, vect.size() - 1);
-}
-
 int getConsumedFood(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoodGreed,
 	std::vector<int>& hamstrFoodTotal, int count) {
 
@@ -107,29 +103,29 @@ int getConsumedFood(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFo
 		hamstrFoodTotal[i] = hamstrFoodRate[i] + (count - 1) * hamstrFoodGreed[i];
 	}
 
-	sortPartial(hamstrFoodTotal, count);
+	findOrderStatisticRecursive(hamstrFoodTotal, count, 0, hamstrFoodTotal.size() - 1);
 
 	int currentConsumedFood = getSum(hamstrFoodTotal, count);
 	return currentConsumedFood;
 }
 
 int solveRecurse(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoodGreed,
-	std::vector<int>& hamstrFoodTotal, int foodSupplay, int left, int right) {
+	std::vector<int>& hamstrFoodTotal, int foodSupply, int left, int right) {
 
 	int currentHamstrCount = left + (right - left) / 2;
 
 	int consumedFood1 = getConsumedFood(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, currentHamstrCount);
 	int consumedFood2 = getConsumedFood(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, currentHamstrCount + 1);
 
-	if (consumedFood1 > 0 && consumedFood2 > 0 && consumedFood1 <= foodSupplay && consumedFood2 > foodSupplay) {
+	if (consumedFood1 > 0 && consumedFood2 > 0 && consumedFood1 <= foodSupply && consumedFood2 > foodSupply) {
 		return currentHamstrCount;
 	}
 	else {
-		if (consumedFood1 < 0 || consumedFood2 < 0 || consumedFood1 > foodSupplay) {
-			solveRecurse(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, foodSupplay, left, currentHamstrCount - 1);
+		if (consumedFood1 < 0 || consumedFood2 < 0 || consumedFood1 > foodSupply) {
+			solveRecurse(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, foodSupply, left, currentHamstrCount - 1);
 		}
 		else {
-			solveRecurse(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, foodSupplay, currentHamstrCount + 1, right);
+			solveRecurse(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, foodSupply, currentHamstrCount + 1, right);
 		}
 	}
 
@@ -139,7 +135,7 @@ struct OUTPUT_DATA solve(struct INPUT_DATA inputData) {
 
 	std::vector<int> hamstrFoodTotal(inputData.hamstrCount);
 
-	int currentHamstrCount = solveRecurse(inputData.hamstrFoodRate, inputData.hamstrFoodGreed, hamstrFoodTotal, inputData.foodSupplay, 0, inputData.hamstrCount);
+	int currentHamstrCount = solveRecurse(inputData.hamstrFoodRate, inputData.hamstrFoodGreed, hamstrFoodTotal, inputData.foodSupply, 0, inputData.hamstrCount);
 
 	struct OUTPUT_DATA outputData;
 	outputData.maxHamstrCount = currentHamstrCount;
