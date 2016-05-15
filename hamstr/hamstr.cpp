@@ -54,7 +54,7 @@ std::tuple<int,int> partition(std::vector<int>& vect, int low, int high) {
 		}
 	}
 
-	return { left_read_pos, right_read_pos };
+	return std::tuple<int, int>(left_read_pos, right_read_pos);
 }
 
 void knuthShuffle(std::vector<int>& vect) {
