@@ -4,6 +4,7 @@
 #include <sstream>
 #include <vector>
 #include <algorithm>
+#include <tuple>
 
 
 struct INPUT_DATA {
@@ -39,65 +40,48 @@ struct INPUT_DATA readInput(std::string fileName) {
 	return inputData;
 }
 
-int partition(std::vector<int>& vect, int low, int high) {
-	int left = std::min(low + 1, high);
-	int right = high;
+std::tuple<int,int> partition(std::vector<int>& vect, int low, int high) {
+	int left_read_pos = low;
+	int right_read_pos = high;
+	int pivot = vect[(low + high) / 2];
 
-	int pivot = vect[low];
+	while (left_read_pos <= right_read_pos) {
+		while (vect[left_read_pos] < pivot && left_read_pos <= right_read_pos) { left_read_pos++; };
+		while (pivot < vect[right_read_pos] && right_read_pos >= 0) { right_read_pos--; };
 
-	while (true) {
-		while (vect[left] <= pivot) {
-			if (left == high) {
-				break;
-			}
-			left++;
+		if (left_read_pos <= right_read_pos) {
+			std::swap(vect[left_read_pos++], vect[right_read_pos--]);
 		}
-
-		while (pivot <= vect[right]) {
-			if (right == low) {
-				break;
-			}
-			right--;
-		}
-
-		if (left >= right) {
-			break;
-		}
-
-		std::swap(vect[left], vect[right]);
 	}
 
-	std::swap(vect[low], vect[right]);
-	return right;
+	return { left_read_pos, right_read_pos };
+}
+
+void knuthShuffle(std::vector<int>& vect) {
+	int subArraySize = vect.size();
+
+	for (int i = 0; i < vect.size(); i++, subArraySize--) {
+		int randIndex = std::rand() % subArraySize;
+
+		if (i != randIndex) {
+			std::swap(vect[i], vect[randIndex]);
+		}
+	}
 }
 
 int findOrderStatisticRecursive(std::vector<int>& vect, int k, int low, int high) {
-	if (high < low) {
+	if (high <= low) {
 		return vect[low];
 	}
 
-	int pivot_pos = partition(vect, low, high);
+	std::tuple<int, int> pivot_pos = partition(vect, low, high);
 
-	if (pivot_pos < k - 1) {
-		findOrderStatisticRecursive(vect, k, pivot_pos + 1, high);
+	if (std::get<0>(pivot_pos) < k - 1) {
+		findOrderStatisticRecursive(vect, k, std::get<0>(pivot_pos), high);
 	}
 	else {
-		findOrderStatisticRecursive(vect, k, low, pivot_pos - 1);
+		findOrderStatisticRecursive(vect, k, low, std::get<1>(pivot_pos));
 	}
-}
-
-size_t highestOneBitPosition(uint32_t a) {
-	size_t bits = 0;
-	while (a != 0) {
-		++bits;
-		a >>= 1;
-	};
-	return bits;
-}
-
-bool isAdditionSafe(uint32_t a, uint32_t b) {
-	size_t a_bits = highestOneBitPosition(a), b_bits = highestOneBitPosition(b);
-	return (a_bits<32 && b_bits<32);
 }
 
 bool canFeedHamstr(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoodGreed,
@@ -107,47 +91,41 @@ bool canFeedHamstr(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoo
 		hamstrFoodTotal[i] = hamstrFoodRate[i] + (count - 1) * hamstrFoodGreed[i];
 	}
 
+	knuthShuffle(hamstrFoodTotal);
 	findOrderStatisticRecursive(hamstrFoodTotal, count, 0, hamstrFoodTotal.size() - 1);
 
-	int sum = 0;
+	long long sum = 0;
 
 	for (int i = 0; i < count; i++) {
-		if (!isAdditionSafe(sum, hamstrFoodGreed[i]))
-		{
-			return false;
-		}
 		sum += hamstrFoodTotal[i];
+		if(hamstrFoodTotal[count] < hamstrFoodTotal[i]){
+			sum += 0;
+		}
 	}
 	return sum < foodSupply;
 }
 
-int solveRecurse(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoodGreed,
+int solve(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoodGreed,
 	std::vector<int>& hamstrFoodTotal, int foodSupply, int left, int right) {
 
-	int currentHamstrCount = left + (right - left) / 2;
+	while (left < right) {
+		int currentHamstrCount = (left + right + 1) / 2;
+		bool canFeedCurrent = canFeedHamstr(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, foodSupply, currentHamstrCount);
 
-	bool canFeedCurrent = canFeedHamstr(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, foodSupply, currentHamstrCount);
-	bool canFeedNext = canFeedHamstr(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, foodSupply, currentHamstrCount + 1);
-
-	if (canFeedCurrent && !canFeedNext) {
-		return currentHamstrCount;
-	}
-	else {
 		if (!canFeedCurrent) {
-			solveRecurse(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, foodSupply, left, currentHamstrCount - 1);
+			right = currentHamstrCount - 1;
 		}
 		else {
-			solveRecurse(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, foodSupply, currentHamstrCount + 1, right);
+			left = currentHamstrCount;
 		}
 	}
 
+	return right;
 }
 
 struct OUTPUT_DATA solve(struct INPUT_DATA inputData) {
-
 	std::vector<int> hamstrFoodTotal(inputData.hamstrCount);
-
-	int currentHamstrCount = solveRecurse(inputData.hamstrFoodRate, inputData.hamstrFoodGreed, hamstrFoodTotal, inputData.foodSupply, 0, inputData.hamstrCount);
+	int currentHamstrCount = solve(inputData.hamstrFoodRate, inputData.hamstrFoodGreed, hamstrFoodTotal, inputData.foodSupply, 0, inputData.hamstrCount);
 
 	struct OUTPUT_DATA outputData;
 	outputData.maxHamstrCount = currentHamstrCount;
