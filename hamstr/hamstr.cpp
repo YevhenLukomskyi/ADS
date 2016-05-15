@@ -3,7 +3,6 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include <limits>
 #include <algorithm>
 
 
@@ -87,6 +86,20 @@ int findOrderStatisticRecursive(std::vector<int>& vect, int k, int low, int high
 	}
 }
 
+size_t highestOneBitPosition(uint32_t a) {
+	size_t bits = 0;
+	while (a != 0) {
+		++bits;
+		a >>= 1;
+	};
+	return bits;
+}
+
+bool isAdditionSafe(uint32_t a, uint32_t b) {
+	size_t a_bits = highestOneBitPosition(a), b_bits = highestOneBitPosition(b);
+	return (a_bits<32 && b_bits<32);
+}
+
 bool canFeedHamstr(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoodGreed,
 	std::vector<int>& hamstrFoodTotal, int foodSupply, int count) {
 
@@ -99,7 +112,7 @@ bool canFeedHamstr(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoo
 	int sum = 0;
 
 	for (int i = 0; i < count; i++) {
-		if (INT_MAX - sum < hamstrFoodTotal[i])
+		if (!isAdditionSafe(sum, hamstrFoodGreed[i]))
 		{
 			return false;
 		}
