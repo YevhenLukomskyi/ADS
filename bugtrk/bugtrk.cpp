@@ -1,14 +1,7 @@
-// bugtrk.cpp : Defines the entry point for the console application.
-//
-
-#include "stdafx.h"
-
-
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <string>
-
 #include <ctime>
 
 
@@ -48,15 +41,16 @@ struct OUTPUT_DATA solve(struct INPUT_DATA inputData) {
 	struct OUTPUT_DATA outputData;
 
 	int left = 0;
-	int right = 10e9;
+	int max_side_len = inputData.width > inputData.height ? inputData.width : inputData.height;
+	int right = max_side_len * inputData.count;
 
-	while (left < right) {
-		int current = (left + right + 1) / 2;
+	while (right - left > 1) {
+		int current = left + (right - left) / 2;
 		if (!canHostAllCards(current, inputData)) {
 			left = current;
 		}
 		else {
-			right = current - 1;
+			right = current;
 		}
 	}
 
@@ -67,7 +61,7 @@ struct OUTPUT_DATA solve(struct INPUT_DATA inputData) {
 
 int main(int argc, const char *argv[])
 {
-	clock_t begin = clock();
+	//clock_t begin = clock();
 
 	auto inputFileName = argc == 1 ? "bugtrk.in" : argv[1];
 	auto outputFileName = argc == 1 ? "bugtrk.out" : argv[2];
@@ -76,12 +70,12 @@ int main(int argc, const char *argv[])
 	auto outputData = solve(inputData);
 	writeOutput(outputFileName, outputData);
 
-	clock_t end = clock();
-	double elapsed_ms = double(end - begin) / CLOCKS_PER_SEC * 1000;
+	//clock_t end = clock();
+	//double elapsed_ms = double(end - begin) / CLOCKS_PER_SEC * 1000;
 
-	std::cout << elapsed_ms;
+	//std::cout << elapsed_ms;
 
-	std::getchar();
+	//std::getchar();
 
 	return 0;
 }
