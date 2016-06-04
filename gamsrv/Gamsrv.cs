@@ -100,14 +100,14 @@ namespace GamsrvCS
             var distances = graph.Vertices.Keys.ToDictionary(k => k, v => long.MaxValue);
             distances[startVertex.Label] = 0;
 
-            var sortedSet = new SortedSet<Tuple<string, long>>(new DistanceComparer());
-            sortedSet.Add(new Tuple<string, long>(startVertex.Label, 0));
+            var sortedList = new List<Tuple<string, long>>();
+            sortedList.Add(new Tuple<string, long>(startVertex.Label, 0));
 
-            while (sortedSet.Any())
+            while (sortedList.Any())
             {
-                var minDistVertex = graph.Vertices[sortedSet.Min.Item1];
-                var minDist = sortedSet.Min.Item2;
-                sortedSet.Remove(sortedSet.Min);
+                var minDistVertex = graph.Vertices[sortedList[0].Item1];
+                var minDist = sortedList[0].Item2;
+                sortedList.RemoveAt(0);
 
                 foreach(var edge in minDistVertex.OutboundEdges)
                 {
@@ -117,9 +117,11 @@ namespace GamsrvCS
                     if (alternativeDistance < distances[neighborVertex.Label])
                     {
                         distances[neighborVertex.Label] = alternativeDistance;
-                        sortedSet.Add(new Tuple<string, long>(neighborVertex.Label, alternativeDistance));
+                        sortedList.Add(new Tuple<string, long>(neighborVertex.Label, alternativeDistance));
                     }
                 }
+
+                sortedList.Sort(new DistanceComparer());
             }
 
             return distances;
@@ -194,7 +196,8 @@ namespace GamsrvCS
                 {
                     continue;
                 }
-                var maxLatency = DijkstraAlgorithm.GetMinDistances(vertex, inputData.Graph).Values.Max();
+                var maxLatency = DijkstraAlgorithm.GetMinDistances(vertex, inputData.Graph).
+                    Where(v=>inputData.Clients.Contains(v.Key)).Select(v=>v.Value).Max();
                 if (latency > maxLatency)
                 {
                     latency = maxLatency;
