@@ -132,8 +132,8 @@ namespace GamsrvCS
     {
         static void Main(string[] args)
         {
-            string inputFileName = args.Length >= 2 ? args[0] : "gamesrv.in";
-            string outputFileName = args.Length >= 2 ? args[1] : "gamesrv.out";
+            string inputFileName = args.Length >= 2 ? args[0] : "gamsrv.in";
+            string outputFileName = args.Length >= 2 ? args[1] : "gamsrv.out";
 
             InputData inputData = ReadInput(inputFileName);
             OutputData outputData = Solve(inputData);
