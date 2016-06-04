@@ -140,17 +140,25 @@ namespace GovernCS
     {
         public List<Vertex> GetTopologicalOrder(Graph graph)
         {
-            var toplogicalOrder = DfsStack(graph.Vertices.First().Value, graph);
-            return toplogicalOrder;
+            var topologicalOrder = new List<Vertex>();
+            var topologicalOrderSet = new HashSet<string>();
+            var unvisitedVertices = new HashSet<string>(graph.Vertices.Select(v => v.Key));
+            var visitedStatus = graph.Vertices.ToDictionary(k => k.Key, v => VertexStatus.NotVisited);
+
+            while (unvisitedVertices.Any())
+            {
+                var unvisitedVertex = graph.Vertices[unvisitedVertices.First()];
+                DfsStack(unvisitedVertex, graph, unvisitedVertices, visitedStatus, topologicalOrder, topologicalOrderSet);
+            }
+
+            return topologicalOrder;
         }
 
-        private List<Vertex> DfsStack(Vertex startVertex, Graph graph)
+        private List<Vertex> DfsStack(Vertex startVertex, Graph graph, HashSet<string> unvisitedVertices, Dictionary<string, VertexStatus> vertices, 
+            List<Vertex> topologicalOrder, HashSet<string> topologicalOrderSet)
         {
-            var topologicalOrder = new List<Vertex>();
             var stack = new Stack<Vertex>();
             stack.Push(startVertex);
-
-            var unvisitedVertices = new HashSet<string>(graph.Vertices.Select(v => v.Key));
             var visitedStatus = graph.Vertices.ToDictionary(k => k.Key, v => VertexStatus.NotVisited);
 
             while (stack.Any())
@@ -178,7 +186,12 @@ namespace GovernCS
                 if (!unvisitedNeighbors.Any())
                 {
                     visitedStatus[vertex.Label] = VertexStatus.VisitedAndResolved;
-                    topologicalOrder.Add(vertex);
+
+                    if (!topologicalOrderSet.Contains(vertex.Label))
+                    {
+                        topologicalOrderSet.Add(vertex.Label);
+                        topologicalOrder.Add(vertex);
+                    }
                 }
                 else
                 {
@@ -204,20 +217,12 @@ namespace GovernCS
     {
         static void Main(string[] args)
         {
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-
             string inputFileName = args.Length >= 2 ? args[0] : "govern.in";
             string outputFileName = args.Length >= 2 ? args[1] : "govern.out";
 
             InputData inputData = ReadInput(inputFileName);
             OutputData outputData = Solve(inputData);
             WriteOutput(outputFileName, outputData);
-
-            watch.Stop();
-
-            var elapsedMs = watch.ElapsedMilliseconds;
-            Console.WriteLine(elapsedMs);
-            Console.ReadKey();
         }
 
         private static InputData ReadInput(string fileName)
