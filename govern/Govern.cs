@@ -44,12 +44,12 @@ namespace GovernCS
 
     class Graph
     {
-        public List<Vertex> Vertices { get; set; }
+        public Dictionary<string, Vertex> Vertices { get; set; }
         public List<Edge> Edges { get; set; }
 
         public Graph()
         {
-            Vertices = new List<Vertex>();
+            Vertices = new Dictionary<string, Vertex>();
             Edges = new List<Edge>();
         }
     }
@@ -89,38 +89,43 @@ namespace GovernCS
         VisitedAndResolved
     }
 
-    class TarjanAlgorithm
+    interface ITopologicalOrderFindAlgorithm
     {
-        public static List<Vertex> GetTopologicalOrder(Graph graph)
+        List<Vertex> GetTopologicalOrder(Graph graph);
+    }
+
+    class TarjanAlgorithmRecursive : ITopologicalOrderFindAlgorithm
+    {
+        public List<Vertex> GetTopologicalOrder(Graph graph)
         {
             var topologicalOrder = new List<Vertex>();
-            var unvisitedVertices = new HashSet<string>(graph.Vertices.Select(v => v.Label));
-            var visitedStatus = graph.Vertices.ToDictionary(k => k.Label, v => VertexStatus.NotVisited);
+            var unvisitedVertices = new HashSet<string>(graph.Vertices.Select(v => v.Key));
+            var visitedStatus = graph.Vertices.ToDictionary(k => k.Key, v => VertexStatus.NotVisited);
 
             while (unvisitedVertices.Any())
             {
-                var unvisitedVertex = graph.Vertices.Where(v => v.Label == unvisitedVertices.First()).Single();
+                var unvisitedVertex = graph.Vertices[unvisitedVertices.First()];
                 DfsRecurse(unvisitedVertex, unvisitedVertices, visitedStatus, topologicalOrder);
             }
 
             return topologicalOrder;
         }
 
-        private static void DfsRecurse(Vertex vertex, HashSet<string> unvisitedVertices, Dictionary<string, VertexStatus> visitedStatus, List<Vertex> topologicalOrder)
+        private void DfsRecurse(Vertex vertex, HashSet<string> unvisitedVertices, Dictionary<string, VertexStatus> visitedStatus, List<Vertex> topologicalOrder)
         {
-            if(visitedStatus[vertex.Label] == VertexStatus.Visited)
+            if (visitedStatus[vertex.Label] == VertexStatus.Visited)
             {
                 throw new NotDirectedAcyclicGraphException();
             }
 
-            if(visitedStatus[vertex.Label] == VertexStatus.NotVisited)
+            if (visitedStatus[vertex.Label] == VertexStatus.NotVisited)
             {
                 unvisitedVertices.Remove(vertex.Label);
                 visitedStatus[vertex.Label] = VertexStatus.Visited;
 
                 var neighbors = vertex.OutboundEdges.Select(e => e.EndVertex).ToList();
 
-                foreach(var neighbor in neighbors)
+                foreach (var neighbor in neighbors)
                 {
                     DfsRecurse(neighbor, unvisitedVertices, visitedStatus, topologicalOrder);
                 }
@@ -131,49 +136,113 @@ namespace GovernCS
         }
     }
 
+    class TarjsnAlgorithmStack : ITopologicalOrderFindAlgorithm
+    {
+        public List<Vertex> GetTopologicalOrder(Graph graph)
+        {
+            var toplogicalOrder = DfsStack(graph.Vertices.First().Value, graph);
+            return toplogicalOrder;
+        }
+
+        private List<Vertex> DfsStack(Vertex startVertex, Graph graph)
+        {
+            var topologicalOrder = new List<Vertex>();
+            var stack = new Stack<Vertex>();
+            stack.Push(startVertex);
+
+            var unvisitedVertices = new HashSet<string>(graph.Vertices.Select(v => v.Key));
+            var visitedStatus = graph.Vertices.ToDictionary(k => k.Key, v => VertexStatus.NotVisited);
+
+            while (stack.Any())
+            {
+                var vertex = stack.Pop();
+                visitedStatus[vertex.Label] = VertexStatus.Visited;
+                unvisitedVertices.Remove(vertex.Label);
+
+                var unvisitedNeighbors = new List<Vertex>();
+                var neighbors = vertex.OutboundEdges.Select(e => e.EndVertex).ToList();
+
+                foreach (var neighbor in neighbors)
+                {
+                    if (visitedStatus[neighbor.Label] == VertexStatus.Visited)
+                    {
+                        throw new NotDirectedAcyclicGraphException();
+                    }
+
+                    if (visitedStatus[neighbor.Label] == VertexStatus.NotVisited)
+                    {
+                        unvisitedNeighbors.Add(neighbor);
+                    }
+                }
+
+                if (!unvisitedNeighbors.Any())
+                {
+                    visitedStatus[vertex.Label] = VertexStatus.VisitedAndResolved;
+                    topologicalOrder.Add(vertex);
+                }
+                else
+                {
+                    stack.Push(vertex);
+                    unvisitedNeighbors.ForEach(v => stack.Push(v));
+                }
+
+            }
+
+            return topologicalOrder;
+        }
+
+
+    }
+
     class NotDirectedAcyclicGraphException : Exception
     {
     }
 
     #endregion
 
-
-
     class Program
     {
         static void Main(string[] args)
         {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+
             string inputFileName = args.Length >= 2 ? args[0] : "govern.in";
             string outputFileName = args.Length >= 2 ? args[1] : "govern.out";
 
             InputData inputData = ReadInput(inputFileName);
             OutputData outputData = Solve(inputData);
             WriteOutput(outputFileName, outputData);
+
+            watch.Stop();
+
+            var elapsedMs = watch.ElapsedMilliseconds;
+            Console.WriteLine(elapsedMs);
+            Console.ReadKey();
         }
 
         private static InputData ReadInput(string fileName)
         {
             var inputData = new InputData();
 
-            foreach(var line in File.ReadLines(fileName))
+            foreach (var line in File.ReadLines(fileName))
             {
                 var splittedLine = line.Split();
                 var startVertexLabel = splittedLine[0];
                 var endVertexLabel = splittedLine[1];
 
-                var startVertex = inputData.Graph.Vertices.SingleOrDefault(v => v.Label == startVertexLabel);
-                var endVertex = inputData.Graph.Vertices.SingleOrDefault(v => v.Label == endVertexLabel);
+                Vertex startVertex;
+                Vertex endVertex;
 
-                if(startVertex == null)
+                if (!inputData.Graph.Vertices.TryGetValue(startVertexLabel, out startVertex))
                 {
                     startVertex = new Vertex(startVertexLabel, new List<Edge>());
-                    inputData.Graph.Vertices.Add(startVertex);
+                    inputData.Graph.Vertices.Add(startVertexLabel, startVertex);
                 }
 
-                if(endVertex == null)
+                if (!inputData.Graph.Vertices.TryGetValue(endVertexLabel, out endVertex))
                 {
                     endVertex = new Vertex(endVertexLabel, new List<Edge>());
-                    inputData.Graph.Vertices.Add(endVertex);
+                    inputData.Graph.Vertices.Add(endVertexLabel, endVertex);
                 }
 
                 var edge = new Edge(startVertex, endVertex);
@@ -186,7 +255,8 @@ namespace GovernCS
 
         private static OutputData Solve(InputData inputData)
         {
-            var topologicalOrder =  TarjanAlgorithm.GetTopologicalOrder(inputData.Graph);
+            var algorithm = new TarjsnAlgorithmStack();
+            var topologicalOrder = algorithm.GetTopologicalOrder(inputData.Graph);
             return new OutputData { TopologicalOrder = topologicalOrder };
         }
 
