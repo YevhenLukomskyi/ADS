@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -144,34 +145,28 @@ namespace GovernCS
         {
             var topologicalOrder = new List<Vertex>();
             var topologicalOrderSet = new HashSet<string>();
-            var unvisitedVertices = graph.Vertices.OrderBy(v => v.Value.IncomingEdges.Count).Select(v => v.Key).ToList();
             var visitedStatus = graph.Vertices.ToDictionary(k => k.Key, v => VertexStatus.NotVisited);
 
-
-            var vLst = graph.Vertices.OrderBy(v => v.Value.IncomingEdges.Count).ToList();
-
-            while (unvisitedVertices.Any())
+            var startVertices = graph.Vertices.Where(v => !v.Value.IncomingEdges.Any()).Select(v=>v.Value).ToList();
+            foreach(var startVertex in startVertices)
             {
-                var unvisitedVertex = graph.Vertices[unvisitedVertices.First()];
-                DfsStack(unvisitedVertex, graph, unvisitedVertices, visitedStatus, topologicalOrder, topologicalOrderSet);
+                DfsStack(startVertex, graph, visitedStatus, topologicalOrder, topologicalOrderSet);
             }
 
             return topologicalOrder;
         }
 
 
-        private List<Vertex> DfsStack(Vertex startVertex, Graph graph, List<string> unvisitedVertices, Dictionary<string, VertexStatus> vertices, 
+        private List<Vertex> DfsStack(Vertex startVertex, Graph graph, Dictionary<string, VertexStatus> visitedStatus, 
             List<Vertex> topologicalOrder, HashSet<string> topologicalOrderSet)
         {
             var stack = new Stack<Vertex>();
             stack.Push(startVertex);
-            var visitedStatus = graph.Vertices.ToDictionary(k => k.Key, v => VertexStatus.NotVisited);
 
             while (stack.Any())
             {
                 var vertex = stack.Pop();
                 visitedStatus[vertex.Label] = VertexStatus.Visited;
-                unvisitedVertices.Remove(vertex.Label);
 
                 var unvisitedNeighbors = new List<Vertex>();
                 var neighbors = vertex.OutcomingEdges.Select(e => e.EndVertex).ToList();
@@ -228,7 +223,7 @@ namespace GovernCS
             WriteOutput(outputFileName, outputData);
         }
 
-        private static InputData ReadInput(string fileName)
+         private static InputData ReadInput(string fileName)
         {
             var inputData = new InputData();
 
