@@ -33,7 +33,7 @@ void writeOutput(std::string fileName, struct OUTPUT_DATA outputData) {
 }
 
 bool canHostAllCards(int squareSideLen, struct INPUT_DATA inputData) {
-	int currentCapacity = squareSideLen / inputData.height  * squareSideLen / inputData.width;
+	int currentCapacity = (double)squareSideLen / inputData.height * (double)squareSideLen / inputData.width;
 	return currentCapacity >= inputData.count;
 }
 
