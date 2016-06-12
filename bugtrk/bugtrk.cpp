@@ -21,6 +21,7 @@ struct INPUT_DATA readInput(std::string fileName) {
 	inputFile >> inputData.width;
 	inputFile >> inputData.height;
 
+	inputFile.close();
 	return inputData;
 }
 
@@ -31,7 +32,7 @@ void writeOutput(std::string fileName, struct OUTPUT_DATA outputData) {
 }
 
 bool canHostAllCards(int squareSideLen, struct INPUT_DATA inputData) {
-	uint64_t currentCapacity = squareSideLen / inputData.height  * squareSideLen / inputData.width;
+	uint64_t currentCapacity = (squareSideLen / inputData.height) * (squareSideLen / inputData.width);
 	return currentCapacity >= inputData.count;
 }
 
