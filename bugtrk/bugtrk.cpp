@@ -12,7 +12,7 @@ struct INPUT_DATA {
 };
 
 struct OUTPUT_DATA {
-	int squareLen;
+	long squareSideLen;
 };
 
 struct INPUT_DATA readInput(std::string fileName) {
@@ -28,12 +28,12 @@ struct INPUT_DATA readInput(std::string fileName) {
 
 void writeOutput(std::string fileName, struct OUTPUT_DATA outputData) {
 	std::ofstream outputFile(fileName, std::ifstream::out);
-	outputFile << outputData.squareLen;
+	outputFile << outputData.squareSideLen;
 	outputFile.close();
 }
 
 bool canHostAllCards(int squareSideLen, struct INPUT_DATA inputData) {
-	int currentCapacity = (double)squareSideLen / inputData.height * (double)squareSideLen / inputData.width;
+	int currentCapacity = squareSideLen / inputData.height  * squareSideLen / inputData.width;
 	return currentCapacity >= inputData.count;
 }
 
@@ -41,41 +41,31 @@ struct OUTPUT_DATA solve(struct INPUT_DATA inputData) {
 	struct OUTPUT_DATA outputData;
 
 	int left = 0;
-	int max_side_len = inputData.width > inputData.height ? inputData.width : inputData.height;
-	int right = max_side_len * inputData.count;
+	int right = inputData.count * std::fmaxl(inputData.height, inputData.width);
 
 	while (right - left > 1) {
 		int current = left + (right - left) / 2;
-		if (!canHostAllCards(current, inputData)) {
-			left = current;
+		if (canHostAllCards(current, inputData)) {
+			right = current;
 		}
 		else {
-			right = current;
+			left = current;
 		}
 	}
 
-	outputData.squareLen = right;
+	outputData.squareSideLen = right;
 
 	return outputData;
 }
 
 int main(int argc, const char *argv[])
 {
-	//clock_t begin = clock();
-
 	auto inputFileName = argc == 1 ? "bugtrk.in" : argv[1];
 	auto outputFileName = argc == 1 ? "bugtrk.out" : argv[2];
 
 	auto inputData = readInput(inputFileName);
 	auto outputData = solve(inputData);
 	writeOutput(outputFileName, outputData);
-
-	//clock_t end = clock();
-	//double elapsed_ms = double(end - begin) / CLOCKS_PER_SEC * 1000;
-
-	//std::cout << elapsed_ms;
-
-	//std::getchar();
 
 	return 0;
 }
