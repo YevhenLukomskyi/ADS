@@ -2,17 +2,15 @@
 #include <fstream>
 #include <vector>
 #include <string>
-#include <ctime>
-
 
 struct INPUT_DATA {
-	int count;
-	int width;
-	int height;
+	uint64_t count;
+	uint64_t width;
+	uint64_t height;
 };
 
 struct OUTPUT_DATA {
-	long squareSideLen;
+	uint64_t squareSideLen;
 };
 
 struct INPUT_DATA readInput(std::string fileName) {
@@ -33,18 +31,18 @@ void writeOutput(std::string fileName, struct OUTPUT_DATA outputData) {
 }
 
 bool canHostAllCards(int squareSideLen, struct INPUT_DATA inputData) {
-	int currentCapacity = squareSideLen / inputData.height  * squareSideLen / inputData.width;
+	uint64_t currentCapacity = squareSideLen / inputData.height  * squareSideLen / inputData.width;
 	return currentCapacity >= inputData.count;
 }
 
 struct OUTPUT_DATA solve(struct INPUT_DATA inputData) {
 	struct OUTPUT_DATA outputData;
 
-	int left = 0;
-	int right = inputData.count * std::max(inputData.height, inputData.width);
+	uint64_t left = 0;
+	uint64_t right = inputData.count * std::fmaxl(inputData.height, inputData.width);
 
 	while (right - left > 1) {
-		int current = left + (right - left) / 2;
+		uint64_t current = left + (right - left) / 2;
 		if (canHostAllCards(current, inputData)) {
 			right = current;
 		}
