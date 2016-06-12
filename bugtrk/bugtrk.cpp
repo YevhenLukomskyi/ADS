@@ -1,7 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <string>
+#include <algorithm>
+
 
 struct INPUT_DATA {
 	uint64_t count;
@@ -31,7 +32,7 @@ void writeOutput(std::string fileName, struct OUTPUT_DATA outputData) {
 	outputFile.close();
 }
 
-bool canHostAllCards(int squareSideLen, struct INPUT_DATA inputData) {
+bool canHostAllCards(uint64_t squareSideLen, struct INPUT_DATA inputData) {
 	uint64_t cardsPerRow = squareSideLen / inputData.width;
 	uint64_t cardsPerCol = squareSideLen / inputData.height;
 	uint64_t currentCapacity = cardsPerRow * cardsPerCol;
@@ -39,7 +40,6 @@ bool canHostAllCards(int squareSideLen, struct INPUT_DATA inputData) {
 }
 
 struct OUTPUT_DATA solve(struct INPUT_DATA inputData) {
-	struct OUTPUT_DATA outputData;
 
 	uint64_t left = 1;
 	uint64_t right = inputData.count * std::max(inputData.height, inputData.width);
@@ -54,6 +54,7 @@ struct OUTPUT_DATA solve(struct INPUT_DATA inputData) {
 		}
 	}
 
+	struct OUTPUT_DATA outputData;
 	outputData.squareSideLen = right;
 
 	return outputData;
