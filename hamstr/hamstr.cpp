@@ -40,7 +40,7 @@ struct INPUT_DATA readInput(std::string fileName) {
 	return inputData;
 }
 
-std::tuple<int,int> partition(std::vector<int>& vect, int low, int high) {
+std::tuple<int, int> partition(std::vector<int>& vect, int low, int high) {
 	int left_read_pos = low;
 	int right_read_pos = high;
 	int pivot = vect[(low + high) / 2];
@@ -84,7 +84,7 @@ int findOrderStatisticRecursive(std::vector<int>& vect, int k, int low, int high
 	}
 }
 
-bool canFeedHamstr(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoodGreed,
+bool canFeedHamstrs(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoodGreed,
 	std::vector<int>& hamstrFoodTotal, int foodSupply, int count) {
 
 	for (int i = 0; i < hamstrFoodRate.size(); i++) {
@@ -94,23 +94,21 @@ bool canFeedHamstr(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoo
 	knuthShuffle(hamstrFoodTotal);
 	findOrderStatisticRecursive(hamstrFoodTotal, count, 0, hamstrFoodTotal.size() - 1);
 
-	long long sum = 0;
-
+	unsigned long long sum = 0;
 	for (int i = 0; i < count; i++) {
 		sum += hamstrFoodTotal[i];
-		if(hamstrFoodTotal[count] < hamstrFoodTotal[i]){
-			sum += 0;
-		}
 	}
-	return sum < foodSupply;
+
+	return sum <= foodSupply;
 }
 
 int solve(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoodGreed,
 	std::vector<int>& hamstrFoodTotal, int foodSupply, int left, int right) {
 
+
 	while (right - left > 1) {
 		int currentHamstrCount = left + (right - left) / 2;
-		bool canFeedCurrent = canFeedHamstr(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, foodSupply, currentHamstrCount);
+		bool canFeedCurrent = canFeedHamstrs(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, foodSupply, currentHamstrCount);
 
 		if (!canFeedCurrent) {
 			right = currentHamstrCount - 1;
