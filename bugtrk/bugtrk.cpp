@@ -41,7 +41,7 @@ struct OUTPUT_DATA solve(struct INPUT_DATA inputData) {
 	struct OUTPUT_DATA outputData;
 
 	int left = 0;
-	int right = inputData.count * std::fmaxl(inputData.height, inputData.width);
+	int right = inputData.count * std::max(inputData.height, inputData.width);
 
 	while (right - left > 1) {
 		int current = left + (right - left) / 2;
