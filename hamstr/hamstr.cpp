@@ -108,8 +108,8 @@ bool canFeedHamstr(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoo
 int solve(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoodGreed,
 	std::vector<int>& hamstrFoodTotal, int foodSupply, int left, int right) {
 
-	while (left < right) {
-		int currentHamstrCount = (left + right + 1) / 2;
+	while (right - left > 1) {
+		int currentHamstrCount = left + (right - left) / 2;
 		bool canFeedCurrent = canFeedHamstr(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, foodSupply, currentHamstrCount);
 
 		if (!canFeedCurrent) {
