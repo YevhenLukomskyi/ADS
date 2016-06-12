@@ -107,14 +107,14 @@ int solve(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoodGreed,
 
 
 	while (right - left > 1) {
-		int currentHamstrCount = left + (right - left) / 2;
+		int currentHamstrCount = right - (right - left) / 2;
 		bool canFeedCurrent = canFeedHamstrs(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, foodSupply, currentHamstrCount);
 
-		if (!canFeedCurrent) {
-			right = currentHamstrCount - 1;
+		if (canFeedCurrent) {
+			left = currentHamstrCount;
 		}
 		else {
-			left = currentHamstrCount;
+			right = currentHamstrCount;
 		}
 	}
 
