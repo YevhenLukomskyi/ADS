@@ -41,7 +41,7 @@ namespace SigkeyCS
 
         private static OutputData Solve(InputData inputData)
         {
-            var keyMasks = new Dictionary<int, int>();
+            var keyMasks = new Dictionary<int, int>(inputData.KeysCount);
 
             foreach (var key in inputData.Keys)
             {
