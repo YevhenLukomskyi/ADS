@@ -39,7 +39,7 @@ struct OUTPUT_DATA solve(struct INPUT_DATA inputData) {
 	struct OUTPUT_DATA outputData;
 
 	uint64_t left = 0;
-	uint64_t right = inputData.count * std::fmaxl(inputData.height, inputData.width);
+	uint64_t right = inputData.count * std::max(inputData.height, inputData.width);
 
 	while (right - left > 1) {
 		uint64_t current = left + (right - left) / 2;
