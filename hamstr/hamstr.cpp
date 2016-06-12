@@ -118,7 +118,7 @@ int solve(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoodGreed,
 		}
 	}
 
-	return right;
+	return left;
 }
 
 struct OUTPUT_DATA solve(struct INPUT_DATA inputData) {
