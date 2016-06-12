@@ -41,7 +41,7 @@ bool canHostAllCards(int squareSideLen, struct INPUT_DATA inputData) {
 struct OUTPUT_DATA solve(struct INPUT_DATA inputData) {
 	struct OUTPUT_DATA outputData;
 
-	uint64_t left = 0;
+	uint64_t left = 1;
 	uint64_t right = inputData.count * std::max(inputData.height, inputData.width);
 
 	while (right - left > 1) {
