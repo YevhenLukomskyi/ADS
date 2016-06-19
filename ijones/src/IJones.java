@@ -19,8 +19,8 @@ public class IJones {
         try (FileReader inputFileReader = new FileReader(inputFile)) {
             try (BufferedReader bufferedReader = new BufferedReader(inputFileReader)) {
                 String[] theFirstLine = bufferedReader.readLine().split("\\s+");
-                int height = Integer.valueOf(theFirstLine[0]);
-                int width = Integer.valueOf(theFirstLine[1]);
+                int width = Integer.valueOf(theFirstLine[0]);
+                int height = Integer.valueOf(theFirstLine[1]);
 
                 String[] words = new String[height];
                 for (int i = 0; i < height; i++) {
@@ -80,7 +80,7 @@ public class IJones {
             }
         }
 
-        BigInteger countOfWays = height - 1 == 0? waysCurrent[0]: waysCurrent[0].add(waysCurrent[height - 1]);
+        BigInteger countOfWays = height - 1 == 0? waysPrev[0]: waysPrev[0].add(waysPrev[height - 1]);
         return new IJonesOutputData(countOfWays);
     }
 
