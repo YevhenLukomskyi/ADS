@@ -86,7 +86,7 @@ namespace IJonesCS
                 }
             }
 
-            var countOfWays = ways[0][width - 1] + ways[height - 1][width - 1];
+            var countOfWays = height - 1 == 0 ? ways[0][width - 1] : ways[0][width - 1] + ways[height - 1][width - 1];
             return new OutputData { CountOfWays = countOfWays };
         }
 
