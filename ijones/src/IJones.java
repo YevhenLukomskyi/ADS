@@ -6,12 +6,18 @@ import java.util.Map;
 public class IJones {
 
     public static void main(String[] args) throws IOException {
+        long startTime = System.currentTimeMillis();
+
         String inputFileName = args.length >= 2 ? args[0] : "ijones.in";
         String outputFileName = args.length >= 2 ? args[1] : "ijones.out";
 
         IJonesInputData inputData = readInput(inputFileName);
         IJonesOutputData outputData = solve(inputData);
         writeOutput(outputFileName, outputData);
+
+        long stopTime = System.currentTimeMillis();
+        long elapsedTime = stopTime - startTime;
+        System.out.println(elapsedTime);
     }
 
     private static IJonesInputData readInput(String inputFileName) throws IOException {
@@ -58,16 +64,10 @@ public class IJones {
 
         for(int j = 1; j < width; j++){
             for(int i = 0; i < height; i++){
-
-                for(int k = 0; k < height; k++){
-                    waysCurrent[i] = BigInteger.ZERO;
-                }
-
+                waysCurrent[i] = map.get(words[i].charAt(j));
                 if(words[i].charAt(j) != words[i].charAt(j - 1)){
-                    waysCurrent[i] = waysPrev[i];
+                    waysCurrent[i] = waysCurrent[i].add(waysPrev[i]);
                 }
-
-                waysCurrent[i] = waysCurrent[i].add(map.get(words[i].charAt(j)));
             }
 
             for(int i = 0; i < height; i++){
@@ -75,9 +75,9 @@ public class IJones {
                 map.put(key, map.get(key).add(waysCurrent[i]));
             }
 
-            for(int i = 0; i < height; i++){
-                waysPrev[i] = waysCurrent[i];
-            }
+            BigInteger[] tmp = waysPrev;
+            waysPrev = waysCurrent;
+            waysCurrent = tmp;
         }
 
         BigInteger countOfWays = height - 1 == 0? waysPrev[0]: waysPrev[0].add(waysPrev[height - 1]);
