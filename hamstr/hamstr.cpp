@@ -106,15 +106,16 @@ int solve(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoodGreed,
 	std::vector<int>& hamstrFoodTotal, int foodSupply, int left, int right) {
 
 
-	while (right - left > 1) {
-		int currentHamstrCount = right - (right - left) / 2;
-		bool canFeedCurrent = canFeedHamstrs(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, foodSupply, currentHamstrCount);
+	while (right > left) {
+		int currentHamstrCount = (left + right + 1) / 2;
+		bool canFeedCurrent = canFeedHamstrs(hamstrFoodRate, hamstrFoodGreed, hamstrFoodTotal, 
+			foodSupply, currentHamstrCount);
 
 		if (canFeedCurrent) {
 			left = currentHamstrCount;
 		}
 		else {
-			right = currentHamstrCount;
+			right = currentHamstrCount - 1;
 		}
 	}
 
@@ -123,7 +124,8 @@ int solve(std::vector<int>& hamstrFoodRate, std::vector<int>& hamstrFoodGreed,
 
 struct OUTPUT_DATA solve(struct INPUT_DATA inputData) {
 	std::vector<int> hamstrFoodTotal(inputData.hamstrCount);
-	int currentHamstrCount = solve(inputData.hamstrFoodRate, inputData.hamstrFoodGreed, hamstrFoodTotal, inputData.foodSupply, 0, inputData.hamstrCount);
+	int currentHamstrCount = solve(inputData.hamstrFoodRate, inputData.hamstrFoodGreed, 
+		hamstrFoodTotal, inputData.foodSupply, 0, inputData.hamstrCount);
 
 	struct OUTPUT_DATA outputData;
 	outputData.maxHamstrCount = currentHamstrCount;
