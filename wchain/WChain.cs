@@ -44,16 +44,16 @@ namespace WChain
             var words = inputData.Words;
             words.Sort((x, y) => x.Length.CompareTo(y.Length));
 
-            var solutions = words.TakeWhile(v => v.Length == 1).ToDictionary(word => word, word => 1);
+            var solutions = words.TakeWhile(v => v.Length == 1).Distinct().ToDictionary(word => word, word => 1);
 
             foreach (var word in words.SkipWhile(v => v.Length == 1))
             {
                 var maxPossibleSequenceLength = 0;
-                var charsToRemove = word.ToCharArray();
 
-                foreach (var charToRemove in charsToRemove)
+                for (var i = 0; i < word.Length; i++)
                 {
-                    var testWord = word.Replace(charToRemove.ToString(), string.Empty);
+                    var testWord = word.Remove(i, 1);
+
                     var testWordPossibleSequenceLength = 0;
                     if (solutions.TryGetValue(testWord, out testWordPossibleSequenceLength))
                     {
