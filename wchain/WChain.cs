@@ -62,7 +62,15 @@ namespace WChain
                 }
 
                 maxPossibleSequenceLength++;
-                solutions.Add(word, maxPossibleSequenceLength);
+
+                if (solutions.ContainsKey(word))
+                {
+                    solutions[word] = Math.Max(solutions[word], maxPossibleSequenceLength);
+                }
+                else
+                {
+                    solutions.Add(word, maxPossibleSequenceLength);
+                }
             }
 
             return new OutputData
