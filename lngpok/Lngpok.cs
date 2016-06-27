@@ -42,18 +42,16 @@ namespace Lngpok
 
         private static bool CanFillGapsWithJokers(List<int> sortedCards, int jokerCount, int left, int right)
         {
-            //var jCount = 0;
-            //for (var i = begin; i < end; i++)
-            //{
-            //    var diff = sortedCards[i + 1] - sortedCards[i];
-            //    if (diff > 1)
-            //    {
-            //        jCount += diff;
-            //    }
-            //}
-            //return jCount <= jokerCount;
-
-            return (sortedCards[right] - sortedCards[left] - 1) - (right - left - 1) <= jokerCount;
+            var jCount = 0;
+            for (var i = left; i < right; i++)
+            {
+                var diff = sortedCards[i + 1] - sortedCards[i];
+                if (diff > 1)
+                {
+                    jCount += diff;
+                }
+            }
+            return jCount <= jokerCount;
         }
 
         private static OutputData Solve(InputData inputData)
