@@ -48,7 +48,7 @@ namespace Lngpok
                 var diff = sortedCards[i + 1] - sortedCards[i];
                 if (diff > 1)
                 {
-                    jCount += diff;
+                    jCount += (diff - 1);
                 }
             }
             return jCount <= jokerCount;
